@@ -5,7 +5,7 @@ import {
   Map,
   ClipboardList,
   LogOut,
-  ChevronDown,
+  Upload,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useCampaign } from "../context/CampaignContext";
@@ -20,11 +20,16 @@ export default function Layout() {
     navigate("/login");
   };
 
+  const isAdmin = user?.platform_role === "platform_admin";
+
   const navItems = [
     { to: "/dashboard", label: "Dashboard", icon: BarChart3 },
     { to: "/voters", label: "Voters", icon: Users },
     { to: "/turfs", label: "Turfs", icon: Map },
     { to: "/surveys", label: "Surveys", icon: ClipboardList },
+    ...(isAdmin
+      ? [{ to: "/import", label: "Import Data", icon: Upload }]
+      : []),
   ];
 
   return (

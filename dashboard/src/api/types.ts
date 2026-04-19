@@ -43,6 +43,7 @@ export interface Voter {
   address_line1: string;
   city: string;
   zip_code: string;
+  county: string | null;
   party: string | null;
   state_house_district: string | null;
   precinct: string | null;
@@ -102,6 +103,7 @@ export interface VoterFilters {
   min_persuadability_score?: number;
   voter_status?: string;
   zip_code?: string;
+  county?: string;
   limit?: number;
   offset?: number;
 }

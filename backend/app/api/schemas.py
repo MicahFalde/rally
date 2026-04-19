@@ -91,6 +91,7 @@ class VoterResponse(BaseModel):
     address_line1: str
     city: str
     zip_code: str
+    county: str | None
     party: str | None
     state_house_district: str | None
     precinct: str | None
@@ -110,6 +111,7 @@ class VoterListFilter(BaseModel):
     min_persuadability_score: float | None = None
     voter_status: str | None = "active"
     zip_code: str | None = None
+    county: str | None = None
     limit: int = 100
     offset: int = 0
 

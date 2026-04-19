@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "../../api/client";
 import type { Voter, VoterFilters } from "../../api/types";
+import { useAuth } from "../../context/AuthContext";
 import { useCampaign } from "../../context/CampaignContext";
+import SearchableSelect from "../../components/SearchableSelect";
 
 const PARTIES: Record<string, string> = {
   D: "Democrat",
@@ -13,6 +15,7 @@ const PARTIES: Record<string, string> = {
 };
 
 export default function VotersPage() {
+  const { user } = useAuth();
   const { activeCampaign } = useCampaign();
   const [voters, setVoters] = useState<Voter[]>([]);
   const [loading, setLoading] = useState(false);
@@ -20,7 +23,13 @@ export default function VotersPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [adding, setAdding] = useState(false);
 
+  // Lookup options
+  const [countyOptions, setCountyOptions] = useState<string[]>([]);
+  const [districtOptions, setDistrictOptions] = useState<string[]>([]);
+  const [precinctOptions, setPrecinctOptions] = useState<string[]>([]);
+
   // Filters
+  const [county, setCounty] = useState("");
   const [district, setDistrict] = useState("");
   const [precinct, setPrecinct] = useState("");
   const [party, setParty] = useState("");
@@ -39,6 +48,7 @@ export default function VotersPage() {
       offset: newOffset,
       voter_status: status,
     };
+    if (county) params.county = county;
     if (district) params.state_house_district = district;
     if (precinct) params.precinct = precinct;
     if (party) params.party = party;
@@ -91,6 +101,7 @@ export default function VotersPage() {
     setAdding(true);
     try {
       const filters: VoterFilters = { voter_status: status };
+      if (county) filters.county = county;
       if (district) filters.state_house_district = district;
       if (precinct) filters.precinct = precinct;
       if (party) filters.party = party;
@@ -107,6 +118,24 @@ export default function VotersPage() {
       setAdding(false);
     }
   };
+
+  // Fetch lookup options once user is authenticated
+  useEffect(() => {
+    if (!user) return;
+    api.get("/lookups/counties")
+      .then((res) => setCountyOptions(res.data))
+      .catch((err) => console.error("Failed to load counties:", err));
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    const params: Record<string, string> = {};
+    if (county) params.county = county;
+    api.get("/lookups/districts", { params }).then((res) => setDistrictOptions(res.data));
+    api.get("/lookups/precincts", { params }).then((res) => setPrecinctOptions(res.data));
+    setDistrict("");
+    setPrecinct("");
+  }, [user, county]);
 
   useEffect(() => {
     if (activeCampaign) search();
@@ -174,28 +203,30 @@ export default function VotersPage() {
           alignItems: "end",
         }}
       >
-        <div>
-          <label style={{ display: "block", fontSize: 11, color: "#888", marginBottom: 2 }}>
-            House District
-          </label>
-          <input
-            value={district}
-            onChange={(e) => setDistrict(e.target.value)}
-            placeholder="OH-HD-67"
-            style={{ padding: "6px 8px", border: "1px solid #ddd", borderRadius: 4, width: 120, fontSize: 13 }}
-          />
-        </div>
-        <div>
-          <label style={{ display: "block", fontSize: 11, color: "#888", marginBottom: 2 }}>
-            Precinct
-          </label>
-          <input
-            value={precinct}
-            onChange={(e) => setPrecinct(e.target.value)}
-            placeholder="Precinct name"
-            style={{ padding: "6px 8px", border: "1px solid #ddd", borderRadius: 4, width: 150, fontSize: 13 }}
-          />
-        </div>
+        <SearchableSelect
+          label="County"
+          value={county}
+          onChange={setCounty}
+          options={countyOptions}
+          placeholder="All counties"
+          width={160}
+        />
+        <SearchableSelect
+          label="House District"
+          value={district}
+          onChange={setDistrict}
+          options={districtOptions}
+          placeholder="All districts"
+          width={140}
+        />
+        <SearchableSelect
+          label="Precinct"
+          value={precinct}
+          onChange={setPrecinct}
+          options={precinctOptions}
+          placeholder="All precincts"
+          width={180}
+        />
         <div>
           <label style={{ display: "block", fontSize: 11, color: "#888", marginBottom: 2 }}>
             Party
@@ -275,6 +306,7 @@ export default function VotersPage() {
               <th style={{ padding: "10px 12px" }}>Address</th>
               <th style={{ padding: "10px 12px" }}>City</th>
               <th style={{ padding: "10px 12px" }}>ZIP</th>
+              <th style={{ padding: "10px 12px" }}>County</th>
               <th style={{ padding: "10px 12px" }}>Party</th>
               <th style={{ padding: "10px 12px" }}>Precinct</th>
               <th style={{ padding: "10px 12px" }}>District</th>
@@ -283,13 +315,13 @@ export default function VotersPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={8} style={{ padding: 20, textAlign: "center" }}>
+                <td colSpan={9} style={{ padding: 20, textAlign: "center" }}>
                   Loading...
                 </td>
               </tr>
             ) : voters.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{ padding: 20, textAlign: "center", color: "#888" }}>
+                <td colSpan={9} style={{ padding: 20, textAlign: "center", color: "#888" }}>
                   No voters found. Adjust filters and search.
                 </td>
               </tr>
@@ -315,6 +347,7 @@ export default function VotersPage() {
                   <td style={{ padding: "8px 12px" }}>{v.address_line1}</td>
                   <td style={{ padding: "8px 12px" }}>{v.city}</td>
                   <td style={{ padding: "8px 12px" }}>{v.zip_code}</td>
+                  <td style={{ padding: "8px 12px" }}>{v.county || "—"}</td>
                   <td style={{ padding: "8px 12px" }}>
                     {v.party ? PARTIES[v.party] || v.party : "—"}
                   </td>

@@ -23,6 +23,7 @@ async def list_voters(
     min_persuadability_score: float | None = None,
     voter_status: str = "active",
     zip_code: str | None = None,
+    county: str | None = None,
     limit: int = Query(default=100, le=1000),
     offset: int = 0,
     member: CampaignMember = Depends(require_organizer),
@@ -45,6 +46,8 @@ async def list_voters(
         query = query.where(Voter.persuadability_score >= min_persuadability_score)
     if zip_code:
         query = query.where(Voter.zip_code == zip_code)
+    if county:
+        query = query.where(Voter.county == county.upper())
 
     query = query.order_by(Voter.last_name, Voter.first_name).offset(offset).limit(limit)
     result = await db.execute(query)
@@ -112,6 +115,8 @@ async def add_voters_by_filter(
         query = query.where(Voter.persuadability_score >= filters.min_persuadability_score)
     if filters.zip_code:
         query = query.where(Voter.zip_code == filters.zip_code)
+    if filters.county:
+        query = query.where(Voter.county == filters.county.upper())
 
     result = await db.execute(query)
     voter_ids = result.scalars().all()

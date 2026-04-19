@@ -9,6 +9,7 @@ import DashboardPage from "./pages/campaign/DashboardPage";
 import VotersPage from "./pages/voters/VotersPage";
 import TurfsPage from "./pages/turfs/TurfsPage";
 import SurveysPage from "./pages/surveys/SurveysPage";
+import ImportPage from "./pages/admin/ImportPage";
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
               <Route path="/voters" element={<VotersPage />} />
               <Route path="/turfs" element={<TurfsPage />} />
               <Route path="/surveys" element={<SurveysPage />} />
+              <Route path="/import" element={<ImportPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>

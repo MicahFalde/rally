@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import admin, auth, campaigns, canvass, surveys, turfs, voters
+from app.api.routes import admin, auth, campaigns, canvass, lookups, surveys, turfs, voters
 
 app = FastAPI(
     title="Rally",
@@ -24,6 +24,7 @@ app.include_router(voters.router, prefix="/api/v1")
 app.include_router(turfs.router, prefix="/api/v1")
 app.include_router(canvass.router, prefix="/api/v1")
 app.include_router(surveys.router, prefix="/api/v1")
+app.include_router(lookups.router, prefix="/api/v1")
 app.include_router(admin.router, prefix="/api/v1")
 
 
