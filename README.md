@@ -167,17 +167,40 @@ rally/
 
 ## Roadmap
 
+### Done
 - [x] Backend: auth, multi-tenancy, campaign management
-- [x] Backend: Ohio voter file adapter + import pipeline
+- [x] Backend: Ohio voter file adapter + import pipeline (tested: Ashland 33K, Stark 244K voters)
 - [x] Backend: Geocoding pipeline (Geocodio)
 - [x] Backend: Voter targeting, turf creation, canvass results, surveys
-- [x] Dashboard: Auth, voter browser, list builder, survey builder, campaign stats
-- [ ] Dashboard: Turf cutting map UI
-- [ ] Mobile: Relational organizing (contact upload, voter matching, outreach suggestions)
-- [ ] Mobile: Offline-first canvassing
-- [ ] Network layer: Persistent volunteer profiles, cross-campaign intelligence
+- [x] Backend: Lookup endpoints with cascading filters (county → district → precinct)
+- [x] Dashboard: Auth, voter browser with searchable dropdowns, list builder, survey builder, campaign stats
+- [x] Dashboard: Voter file import UI (admin)
+
+### In Progress — POC for Ohio organizers
+- [ ] Dashboard: Campaign creation UI
+- [ ] Dashboard: Member management (invite volunteers, assign roles)
+- [ ] Dashboard: Canvass result entry (after-shift data entry from laptop)
+- [ ] Dashboard: CSV/PDF export of voter lists and walk sheets
+
+### Next — Core differentiator
+- [ ] Relational organizing: contact upload → voter file matching → outreach suggestions
+- [ ] Persistent network layer: volunteer profiles, relational graph, precinct knowledge across cycles
+- [ ] Mobile volunteer app (Flutter, offline-first canvassing + relational outreach)
+
+### Future
 - [ ] P2P texting (10DLC compliant)
+- [ ] Turf cutting map UI (auto-divide target lists into walkable territories)
 - [ ] Additional state adapters
+- [ ] Anomaly detection + QA sampling for canvass data quality
+
+## Decision Log
+
+See [docs/DECISIONS.md](docs/DECISIONS.md) for architecture decision records covering:
+- Why relational organizing is the core value, not turf cutting
+- Two frontends / one backend design
+- State adapter pattern
+- Append-only contact results
+- POC-first approach for Ohio organizers
 
 ## License
 
