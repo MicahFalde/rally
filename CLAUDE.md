@@ -111,6 +111,13 @@ cd dashboard && npm run dev
 - Mobile volunteer app (Flutter, offline-first)
 - Persistent network layer
 
-## Decision Log
+## Docs
 
-See `docs/DECISIONS.md` for full architecture decision records.
+- `docs/DECISIONS.md` — Architecture decision records (13 ADRs). Key ones:
+  - ADR-001: Core value is relational organizing, not turf cutting
+  - ADR-010: Three-tier data ownership (platform / campaign / volunteer)
+  - ADR-011: Volunteer contact retention — edges compound, PII expires
+  - ADR-012: Coordination-mode flag for cross-campaign features
+  - ADR-013: Volunteer-first UX for parallel multi-campaign operations
+- `docs/research/` — Competitive landscape research (gitignored, not committed)
+  - `voter-data-platforms.md` — VAN, i360, Reach, grassroots alternatives, relational organizing efficacy data

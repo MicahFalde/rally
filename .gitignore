@@ -37,3 +37,6 @@ dashboard/.env.local
 
 # Alembic
 backend/migrations/versions/*.pyc
+
+# Internal research notes (not for public repo)
+docs/research/
